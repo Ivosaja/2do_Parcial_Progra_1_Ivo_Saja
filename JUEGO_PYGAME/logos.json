@@ -1,0 +1,93 @@
+{
+    "Whatsapp" : [
+        "Imagenes/Logos/wsp_incorrecta.png",
+        "Imagenes/Logos/wsp_incorrecta_3.png",
+        "Imagenes/Logos/wsp_incorrecta_2.png",
+        "Imagenes/Logos/wsp_correcta.png"
+    ],
+    "Valve" : [
+        "Imagenes/Logos/valve_incorrecta_2.png",
+        "Imagenes/Logos/valve_incorrecta.png",
+        "Imagenes/Logos/valve_correcta.png",
+        "Imagenes/Logos/valve_incorrecta_3.png"
+    ],
+    "Ubuntu" : [
+        "Imagenes/Logos/ubuntu_incorrecta.png",
+        "Imagenes/Logos/ubuntu_correcta.jpg",
+        "Imagenes/Logos/ubuntu_incorrecta_3.png",
+        "Imagenes/Logos/ubuntu_incorrecta_2.jpg"
+    ],
+    "Telegram" : [
+        "Imagenes/Logos/telegram_correcta.png",
+        "Imagenes/Logos/telegram_incorrecta.png",
+        "Imagenes/Logos/telegram_incorrecta_2.png",
+        "Imagenes/Logos/telegram_incorrecta_3.png"
+    ],
+    "Snapchat" : [
+        "Imagenes/Logos/snapchat_incorrecta_2.png",
+        "Imagenes/Logos/snapchat_incorrecta_3.png",
+        "Imagenes/Logos/snapchat_incorrecta.png",
+        "Imagenes/Logos/snapchat_correcta.png"
+    ],
+    "Skype" : [
+        "Imagenes/Logos/skype_incorrecta_3.png",
+        "Imagenes/Logos/skype_incorrecta.png",
+        "Imagenes/Logos/skype_correcta.png",
+        "Imagenes/Logos/skype_incorrecta_2.png"
+    ],
+    "Samsung" : [
+        "Imagenes/Logos/samsung_correcta.jpg",
+        "Imagenes/Logos/samsung_incorrecta_3.jpg",
+        "Imagenes/Logos/samsung_incorrecta_2.jpg",
+        "Imagenes/Logos/samsung_incorrecta.jpg"
+    ],
+    "Rockstar" : [
+        "Imagenes/Logos/rockstar_incorrecta.png",
+        "Imagenes/Logos/rockstar_correcta.png",
+        "Imagenes/Logos/rockstar_incorrecta_2.png",
+        "Imagenes/Logos/rockstar_incorrecta_3.png"
+    ],
+    "Pringles" : [
+        "Imagenes/Logos/pringles_incorrecta_3.png",
+        "Imagenes/Logos/pringles_incorrecta_2.png",
+        "Imagenes/Logos/pringles_incorrecta.png",
+        "Imagenes/Logos/pringles_correcta.png"
+    ],
+    "Netflix" : [
+        "Imagenes/Logos/netflix_correcta.png",
+        "Imagenes/Logos/netflix_incorrecta.png",
+        "Imagenes/Logos/netflix_incorrecta_3.png",
+        "Imagenes/Logos/netflix_incorrecta_2.png"
+    ],
+    "Mojang" : [
+        "Imagenes/Logos/mojang_incorrecta.png",
+        "Imagenes/Logos/mojang_incorrecta_2.png",
+        "Imagenes/Logos/mojang_incorrecta_3.png",
+        "Imagenes/Logos/mojang_correcta.png"
+    ],
+    "Mercedes" : [
+        "Imagenes/Logos/mercedes_incorrecta_2.png",
+        "Imagenes/Logos/mercedes_incorrecta.png",
+        "Imagenes/Logos/mercedes_correcta.png",
+        "Imagenes/Logos/mercedes_incorrecta_3.png"
+    ],
+    "Hotwheels" : [
+        "Imagenes/Logos/hotwheels_incorrecta.png",
+        "Imagenes/Logos/hotwheels_correcta.png",
+        "Imagenes/Logos/hotwheels_incorrecta_3.png",
+        "Imagenes/Logos/hotwheels_incorrecta_2.png"
+    ],
+    "Dell" : [
+        "Imagenes/Logos/dell_incorrecta_3.png",
+        "Imagenes/Logos/dell_incorrecta.png",
+        "Imagenes/Logos/dell_incorrecta_2.png",
+        "Imagenes/Logos/dell_correcta.png"
+    ],
+    "McDonalds" : [
+        "Imagenes/Logos/mcdonalds_incorrecta.png",
+        "Imagenes/Logos/mcdonalds_incorrecta_3.png",
+        "Imagenes/Logos/mcdonalds_incorrecta_2.png",
+        "Imagenes/Logos/mcdonalds_correcta.png"
+    ]
+
+}
