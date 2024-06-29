@@ -306,7 +306,7 @@ def crear_pantalla_juego(pantalla, path_archivo_json: str, texto_nombre: str, re
                 jugador['Record de monedas previo'] = record_actual
                 lista_jugadores.append(jugador)
 
-   
+            print('Hola mundo')
 
             #print(lista_jugadores)
 
