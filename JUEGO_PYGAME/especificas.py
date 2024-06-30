@@ -86,11 +86,41 @@ def dibujar_pegar_en_pantalla_final(pantalla, bandera_sonido: bool, puntos_obten
         pantalla.blit(imagen_sin_sonido, (pos_x_sonido, pos_y_sonido))
 
 
+def realizar_promedio_tiempo_respuesta(tiempo_respuesta_acumulado: int):
+    pass
 
 
 def pegar_logos_en_cuadrantes_pantalla_juego():
     pass
 
+
+
+# def detectar_nombre_de_csv(path_jugadores_csv: str, texto_nombre: str)-> str:
+    
+#     #1-CREAR FUNCION QUE DETECTETS SI EL NOMBRE QUE ESCRIBIO ESTA EN EL CSV SIO LO ENCUENTRA CLAVE
+#     #SE LA PASAMOS A LA CREACION DEL CSV JSON, Y REEMPLAMOS SI SE ENCONTRO USAMOS ESA CLAVE
+    
+
+#     with open(path_jugadores_csv, 'r') as archivo:
+#         lineas_csv = archivo.readlines()
+
+#     clave = 'No encontrado'
+#     for i in range(1, len(lineas_csv)):
+#         datos_lineas = lineas_csv[i]
+#         separador = datos_lineas.split(',')
+#         nombre_jugador = separador[0]
+
+#         if nombre_jugador == texto_nombre:
+#             clave = 'Encontrado'
+#             record_previo = separador[1]
+#             record_previo = record_previo.replace('\n', '')
+#             record_previo = int(record_previo)
+
+#     return clave
+
+
+# def modificar_csv_nombre_encontrado(clave: str, path_jugadores_csv: str, lineas_csv: list):
+    
 
 
 def validar_ingreso_nombre_jugador(nombre_jugador: str)-> str:
@@ -105,56 +135,41 @@ def validar_ingreso_nombre_jugador(nombre_jugador: str)-> str:
 
 
 
-def cargar_jugadores_csv(path_jugadores_csv: str):
-    
-    lista_jugadores = []
-
-    with open(path_jugadores_csv, 'r') as archivo:
-        lineas = archivo.read()
-    
-    for i in range(1, len(lineas)):
-        datos = lineas[i]
-
-        nombre_jugador = datos
-
-
-
-
-
 
 def cargar_marcas_random_sin_repetir(path_archivo_json: str)-> list:
     with open(path_archivo_json, 'r') as archivo:
         marcas = json.load(archivo)
 
-    set_paths_sin_repetir = set()
-
+    #set_paths_sin_repetir = set()
     lista_keys_json = list(marcas.keys())
     longitud_lista_keys = len(lista_keys_json)
-    
-    while True:
-        numero_random_key = random.randint(0, longitud_lista_keys-1)
-        key_logo = lista_keys_json[numero_random_key]
-        set_paths_sin_repetir.add(key_logo)
+
+    lista_marcas_desordenadas = random.sample(lista_keys_json, longitud_lista_keys)
+
+    return lista_marcas_desordenadas
+
+    # while True:
+    #     numero_random_key = random.randint(0, longitud_lista_keys-1)
+    #     key_logo = lista_keys_json[numero_random_key]
+    #     set_paths_sin_repetir.add(key_logo)
         
-        if len(set_paths_sin_repetir) == 15:
-            return list(set_paths_sin_repetir)
+    #     if len(set_paths_sin_repetir) == 15:
+    #         lista_sin_repetir = list(set_paths_sin_repetir)
+    #         return lista_sin_repetir
 
 
 def obtener_respuestas_correctas(path_archivo_json: str)-> list:
     
     lista_paths = []
-    lista = []
     
     with open(path_archivo_json, 'r') as archivo:
         paths = json.load(archivo)
 
-    lista.append(paths)
 
     for dato in paths:
         for path in paths[dato]:
             #RECORRO LOS PATHS DE CADA KEY
             lista_paths.append(path)
-    
     
     #Creamos unas lista con los paths de las imagenes correctas
 

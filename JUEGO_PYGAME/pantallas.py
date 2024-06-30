@@ -4,6 +4,7 @@ from configuraciones import *
 from especificas import * 
 
 lista_jugadores = []
+lista_jugadores_mayor_record = []
 
 def crear_pantalla_principal(pantalla):
 
@@ -22,6 +23,7 @@ def crear_pantalla_principal(pantalla):
     bandera_sonido = True
     ejecutar = True
     boton_clickeado = False
+    bandera_record = False
 
     while ejecutar:
 
@@ -65,24 +67,8 @@ def crear_pantalla_principal(pantalla):
                     elif evento.key == pygame.K_RETURN:
                         sonido_inicio_fin.stop()
 
-                        with open('jugadores.csv', 'r') as archivo:
-                            lineas_csv = archivo.readlines()
-
-                        record_previo = 0
-
-                        for i in range(1, len(lineas_csv)):
-                            datos_previos = lineas_csv[i]
-                            separacion = datos_previos.split(',')
-                            nombre_jugador = separacion[0]
-                
-                            if nombre_jugador == texto_nombre:
-                                record_previo = separacion[1]
-                                record_previo = record_previo.replace('\n', '')
-                                record_previo = int(record_previo)
-                                break
-                        
-   
-                        return pantalla, texto_nombre, record_previo
+                       
+                        return pantalla, texto_nombre
                     
                     
         dibujar_pegar_en_pantalla_principal(pantalla, boton_clickeado, bandera_sonido, texto_nombre)
@@ -93,8 +79,7 @@ def crear_pantalla_principal(pantalla):
 
 #-------------------------------------------------------------------------------------
 
-def crear_pantalla_juego(pantalla, path_archivo_json: str, texto_nombre: str, record_previo: int):
-
+def crear_pantalla_juego(pantalla, path_archivo_json: str, lista_marcas_aleatorias: list, texto_nombre: str):
 
     sonido_respuesta_correcta.set_volume(0.5)
     sonido_respuesta_incorrecta.set_volume(0.5)
@@ -111,15 +96,15 @@ def crear_pantalla_juego(pantalla, path_archivo_json: str, texto_nombre: str, re
     tiempo_de_respuesta = 0
 
 
-    key_aleatoria = cargar_marcas_random_sin_repetir('logos.json')
+    #key_aleatoria = cargar_marcas_random_sin_repetir('logos.json')
     respuestas_correctas = obtener_respuestas_correctas('logos.json')
-    print(key_aleatoria)
+    #print(lista_marcas_aleatorias)
 
     with open(path_archivo_json, 'r') as archivo:
         dato = json.load(archivo)
     
     k = 0
-    lista = dato.get(key_aleatoria[k])
+    lista = dato.get(lista_marcas_aleatorias[k])
 
 
     ejecutar = True
@@ -141,14 +126,14 @@ def crear_pantalla_juego(pantalla, path_archivo_json: str, texto_nombre: str, re
         pygame.draw.rect(pantalla, colores.AZUL_OSCURO, (pos_x_cuadrado_marca, pos_y_cuadrado_marca, ANCHO_CUADRADO_MARCA, ALTO_CUADRADO_MARCA))
         pygame.draw.rect(pantalla, colores.BLANCO, (pos_x_cuadrado_marca, pos_y_cuadrado_marca, ANCHO_CUADRADO_MARCA, ALTO_CUADRADO_MARCA), 5)
 
-        marca_renderizada = fuente_jugador.render(key_aleatoria[k], False, colores.BLANCO, colores.AZUL_OSCURO)
+        marca_renderizada = fuente_jugador.render(lista_marcas_aleatorias[k], False, colores.BLANCO, colores.AZUL_OSCURO)
         pantalla.blit(marca_renderizada, (pos_x_texto_marca, pos_y_texto_marca))
 
         #DIBUJAMOS RECORD PREVIO DEL JUGADOR 
         pygame.draw.rect(pantalla, colores.AZUL_OSCURO, (pos_x_cuadrado_record, pos_y_cuadrado_record, ANCHO_CUADRADO_RECORD, ALTO_CUADRADO_RECORD))
         pygame.draw.rect(pantalla, colores.BLANCO, (pos_x_cuadrado_record, pos_y_cuadrado_record, ANCHO_CUADRADO_RECORD, ALTO_CUADRADO_RECORD), 5)
 
-        #record_texto = fuente_jugador.render(key_aleatoria[k], False, colores.BLANCO, colores.AZUL_OSCURO)
+        #record_texto = fuente_jugador.render(lista_marcas_aleatorias[k], False, colores.BLANCO, colores.AZUL_OSCURO)
 
 
         clock.tick(FPS)
@@ -199,15 +184,14 @@ def crear_pantalla_juego(pantalla, path_archivo_json: str, texto_nombre: str, re
                         sonido_respuesta_correcta.play()
                         acumulador_puntos += 20
                         tiempo_de_respuesta += tiempo_transcurrido
-                        print(f'Tardaste {tiempo_transcurrido} segundos')
                         cronometro_detener = True
                         tiempo_transcurrido = 0 #REINICIO EL TIEMPO TRANSCURRIDO
                         pygame.time.delay(1000)
                         k += 1
 
                         #PARA QUE NO HAYAN ERRORES DE LIST INDEX OUT OF RANGE
-                        if k < len(key_aleatoria):
-                            lista = dato.get(key_aleatoria[k])
+                        if k < len(lista_marcas_aleatorias):
+                            lista = dato.get(lista_marcas_aleatorias[k])
                         tiempo_inicial = pygame.time.get_ticks() #REINICIA EL CRONOMETRO
                         #print(lista)
                         
@@ -216,19 +200,18 @@ def crear_pantalla_juego(pantalla, path_archivo_json: str, texto_nombre: str, re
                         sonido_respuesta_incorrecta.play()
                         acumulador_puntos -= 10
                         tiempo_de_respuesta += tiempo_transcurrido
-                        print(f'Tardaste {tiempo_transcurrido} segundos')
                         cronometro_detener = True
                         tiempo_transcurrido = 0 #REINICIO EL TIEMPO TRANSCURRIDO
                         pygame.time.delay(1000)
                         k += 1
 
                         #PARA QUE NO HAYAN ERRORES DE LIST INDEX OUT OF RANGE
-                        if k < len(key_aleatoria):
-                            lista = dato.get(key_aleatoria[k])
+                        if k < len(lista_marcas_aleatorias):
+                            lista = dato.get(lista_marcas_aleatorias[k])
                         tiempo_inicial = pygame.time.get_ticks() #REINICIA EL CRONOMETRO
                         #print(lista)
                 
-                #contador_correctas = 0
+
                 #HACE QUE NO ESTE PARADO EL CRONOMETRO DE NUEVO
                 cronometro_detener = False
                       
@@ -256,8 +239,8 @@ def crear_pantalla_juego(pantalla, path_archivo_json: str, texto_nombre: str, re
                 vidas -= 1
                 k += 1
                 #PARA QUE NO HAYAN ERRORES DE LIST INDEX OUT OF RANGE
-                if k < len(key_aleatoria):
-                    lista = dato.get(key_aleatoria[k])
+                if k < len(lista_marcas_aleatorias):
+                    lista = dato.get(lista_marcas_aleatorias[k])
                 #tiempo_inicial = pygame.time.get_ticks()
             
             cronometro_detener = False
@@ -287,30 +270,14 @@ def crear_pantalla_juego(pantalla, path_archivo_json: str, texto_nombre: str, re
   
         pantalla.blit(texto_segundos, (pos_x_segundos, pos_y_segundos))
 
-        if k == len(key_aleatoria):
+        if k == len(lista_marcas_aleatorias):
             finalizar = True
             tiempo_de_respuesta = (tiempo_de_respuesta * 0.001)
             promedio_tiempo_respuestas = tiempo_de_respuesta / k
 
         if finalizar == True:
-            
-            jugador = {
-                'Nombre': texto_nombre,
-                'Record de monedas previo': acumulador_puntos
-            }
 
-            record_actual = jugador['Record de monedas previo']
-
-
-            if record_actual > record_previo:
-                jugador['Record de monedas previo'] = record_actual
-                lista_jugadores.append(jugador)
-
-            print('Hola mundo')
-
-            #print(lista_jugadores)
-
-            return pantalla, acumulador_puntos, promedio_tiempo_respuestas, lista_jugadores
+            return pantalla, acumulador_puntos, promedio_tiempo_respuestas
 
         pygame.display.update()
     
