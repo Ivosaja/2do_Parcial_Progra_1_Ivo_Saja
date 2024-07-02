@@ -3,11 +3,26 @@ import colores
 from configuraciones import *
 from especificas import * 
 
-lista_jugadores = []
-lista_jugadores_mayor_record = []
 
 def crear_pantalla_principal(pantalla):
+    """La funcion se encarga de crear lo que seria la pantalla principal del juego y mostrarla,
+    estableciendo todo lo necesario en la misma como la musica, icono, creacion de ventana,
+    etc, y ademas se encarga de manejar los eventos del mouse (para ver si clickeo en el
+    boton de PLAY o en el del Sonido) y del teclado (para capturar el nombre que el
+    jugador quiera ingresar a la hora de jugar, para borrar algun caracter con la tecla BACKSPACE,
+    o para entrar al juego con la tecla RETURN)
 
+    Args:
+        pantalla: Recibe por parametro una pantalla (la cual representa una surface de la libreria Pygame)
+        que representa que si es igual a None (el None aca funciona como una especie de bandera que sirve para
+        hacer que se cree por primera vez la pantalla principal y que si no es igual a None, que no se vuelva a
+        establecer la creacion de una ventana con set_mode())
+
+    Returns:
+        tuple: Retorna una tupla la cual tiene una surface (la pantalla), un str (el nombre del jugador),
+        un int (el record previo del jugador) y por ultimo una lista de str (que representa las partidas
+        cargadas)
+    """
     sonido_inicio_fin.set_volume(0.1)
     sonido_inicio_fin.play(-1)
 
@@ -23,7 +38,6 @@ def crear_pantalla_principal(pantalla):
     bandera_sonido = True
     ejecutar = True
     boton_clickeado = False
-    bandera_record = False
 
     while ejecutar:
 
@@ -65,11 +79,19 @@ def crear_pantalla_principal(pantalla):
                         texto_nombre = texto_nombre[0:longitud_texto - 1]
 
                     elif evento.key == pygame.K_RETURN:
-                        sonido_inicio_fin.stop()
 
-                       
-                        return pantalla, texto_nombre
-                    
+                        if texto_nombre.strip() == '':
+                            sonido_respuesta_incorrecta.play()
+                        else:
+                            sonido_inicio_fin.stop()
+
+                            datos_leidos_csv = leer_desde_csv(texto_nombre)
+                            nombre_elegido = datos_leidos_csv[0]
+                            record_previo = datos_leidos_csv[1]
+                            partidas_cargadas = datos_leidos_csv[2]
+
+                            return pantalla, nombre_elegido, record_previo, partidas_cargadas
+
                     
         dibujar_pegar_en_pantalla_principal(pantalla, boton_clickeado, bandera_sonido, texto_nombre)
       
@@ -79,26 +101,55 @@ def crear_pantalla_principal(pantalla):
 
 #-------------------------------------------------------------------------------------
 
-def crear_pantalla_juego(pantalla, path_archivo_json: str, lista_marcas_aleatorias: list, texto_nombre: str):
+def crear_pantalla_juego(pantalla, path_archivo_json: str, lista_marcas_aleatorias: list, record_previo: int):
+    """La funcion se encarga de crear lo que seria la pantalla del juego y mostrarla, ademas
+    de que se encarga de manejar los eventos mas importantes del juego que son el realizar
+    click en alguno de los 4 cuadrantes donde se encuentran las imagenes, manejar el tema de las
+    vidas si se equivoca, reiniciar el cronometro cada que adivina o se le acaba el tiempo, el
+    tema de las monedas que aumenten o resten, el cambio de imagenes, etc.
 
+    Args:
+        pantalla: Recibe por parametro una pantalla (la cual representa una surface de la libreria Pygame),
+        y en este caso la pantalla pasada por parametro es la pantalla principal, haciendo como la animacion
+        de que pasa de la pantalla principal a la del juego sin crear otra ventana con set_mode().
+
+        path_archivo_json (str): Recibe por parametro una ruta de tipo str la cual representa
+        la ubicacion donde se encuentra el archivo JSON que contiene los paths de todas la marcas.
+
+        lista_marcas_aleatorias (list): Recibe por parametro una lista de strings con las 15
+        marcas del archivo JSON pero de manera random/aleatoria y mezcladas.
+
+        record_previo (int): Recibe por parametro un numero de tipo int que representa el record
+        previo del jugador (si es que lo tiene).
+
+    Returns:
+        tuple: Retorna una tupla la cual contiene una surface (la pantalla de juego), un int (que
+        representa la cantidad de puntos que obtuvo en la partida) y un int/float (que representa
+        el promedio de tiempo que tardo en adivinar todas las marcas (o no).) 
+    """
+    #SONIDOS
     sonido_respuesta_correcta.set_volume(0.5)
     sonido_respuesta_incorrecta.set_volume(0.5)
 
+    #CLOCK PARA FPS
     clock = pygame.time.Clock()
 
+    #INICIALIZACION DE VARIABLES DEL TIEMPO PARA EL CRONOMETRO
     tiempo_total = 30000
-    tiempo_inicial = pygame.time.get_ticks()
-
+    tiempo_inicial = pygame.time.get_ticks() #TIEMPO QUE TARDA EN DARLE AL BOTON PLAY DESDE QUE SE EJECUTA PYGAME.INIT()
     cronometro_detener = False
-    finalizar = False
-    acumulador_puntos = 0
+
+    #INICIALIZACION DE BANDERA PARA SABER SI FINALIZO EL JUEGO O NO Y DE VIDAS
     vidas = 5
+    finalizar = False
+
+    #INICIALIZACION DE ACUMULADORES (para el tiempo promedio y para los puntos obtenidos) 
+    acumulador_puntos = 0
     tiempo_de_respuesta = 0
-
-
-    #key_aleatoria = cargar_marcas_random_sin_repetir('logos.json')
+    
+    #LLAMAMOS A LA FUNCION QUE OBTIENE LAS RESPUESTAS CORRECTAS DEL JSON Y LAS GUARDA EN UNA LISTA
     respuestas_correctas = obtener_respuestas_correctas('logos.json')
-    #print(lista_marcas_aleatorias)
+
 
     with open(path_archivo_json, 'r') as archivo:
         dato = json.load(archivo)
@@ -109,91 +160,43 @@ def crear_pantalla_juego(pantalla, path_archivo_json: str, lista_marcas_aleatori
 
     ejecutar = True
     while ejecutar:
-       
-        #PEGAMOS FONDO DE LA PANTALLA JUEGO
-        pantalla.blit(imagen_fondo_juego, (0,0))
-
-        #PEGAMOS VIDAS
-        pantalla.blit(vidas_5, (pos_x_vidas, pos_y_vidas))
-        
-        #PEGAMOS CRONOMETRO Y MONEDA
-        pantalla.blit(imagen_cronometro, (pos_x_cronometro, pos_y_cronometro))
-        pantalla.blit(imagen_moneda, (pos_x_moneda, pos_y_moneda))
-        pantalla.blit(personaje, (pos_x_personaje, pos_y_personaje))
-
-        #DIBUJAMOS CUADRADADO QUE CONTIENE LA MARCA A ADIVINAR
-
-        pygame.draw.rect(pantalla, colores.AZUL_OSCURO, (pos_x_cuadrado_marca, pos_y_cuadrado_marca, ANCHO_CUADRADO_MARCA, ALTO_CUADRADO_MARCA))
-        pygame.draw.rect(pantalla, colores.BLANCO, (pos_x_cuadrado_marca, pos_y_cuadrado_marca, ANCHO_CUADRADO_MARCA, ALTO_CUADRADO_MARCA), 5)
-
-        marca_renderizada = fuente_jugador.render(lista_marcas_aleatorias[k], False, colores.BLANCO, colores.AZUL_OSCURO)
-        pantalla.blit(marca_renderizada, (pos_x_texto_marca, pos_y_texto_marca))
-
-        #DIBUJAMOS RECORD PREVIO DEL JUGADOR 
-        pygame.draw.rect(pantalla, colores.AZUL_OSCURO, (pos_x_cuadrado_record, pos_y_cuadrado_record, ANCHO_CUADRADO_RECORD, ALTO_CUADRADO_RECORD))
-        pygame.draw.rect(pantalla, colores.BLANCO, (pos_x_cuadrado_record, pos_y_cuadrado_record, ANCHO_CUADRADO_RECORD, ALTO_CUADRADO_RECORD), 5)
-
-        #record_texto = fuente_jugador.render(lista_marcas_aleatorias[k], False, colores.BLANCO, colores.AZUL_OSCURO)
-
 
         clock.tick(FPS)
 
-        #PEGAMOS IMAGENES EN CADA CUADRANTE
-        for i in range(len(matriz_dimensiones_cuadradados)):
-            for j in range(len(matriz_dimensiones_cuadradados[i])):
-            
-                #ACCEDO A LAS TUPLAS DE LA MATRIZ
-                variable = matriz_dimensiones_cuadradados[i][j]
-                pos_x_cuadrado = variable[0]
-                pos_y_cuadrado = variable[1]
-                
-                path = lista[i]
-                imagen_logo = pygame.image.load(path)
-                imagen_logo = pygame.transform.scale(imagen_logo, (ANCHO_CUADRADO, ALTO_CUADRADO))
-                pantalla.blit(imagen_logo, (pos_x_cuadrado, pos_y_cuadrado))
+        pegar_imagenes_fijas_pantalla_juego(pantalla)
 
+        dibujar_cuadrado_marca_a_adivinar_y_record_previo(pantalla, lista_marcas_aleatorias, k, record_previo)
 
+        pegar_logos_en_cuadrantes(pantalla, lista, matriz_dimensiones_cuadrados)
+        
         lista_eventos = pygame.event.get()
         for evento in lista_eventos:
-            #print(evento)
             if evento.type == pygame.QUIT:
                 ejecutar = False
 
             elif evento.type == pygame.MOUSEBUTTONDOWN:
                 pos_x_click = evento.pos[0]
                 pos_y_click = evento.pos[1]
-                contador_correctas = 0
-                click_valido = False
+               
+                validacion = validar_click_en_cuadrantes(matriz_dimensiones_cuadrados, pos_x_click, pos_y_click, lista, respuestas_correctas)
 
-                #RECORREMOS LA MATRIZ NUEVAMENTE Y CHEQUEAMOS SI DIO CLICK EN ALGUNO DE LOS 4
-                #CUADRANTES
-                for i in range(len(matriz_dimensiones_cuadradados)):
-                    for j in range(len(matriz_dimensiones_cuadradados[i])):
-                        variable = matriz_dimensiones_cuadradados[i][j]
-                        pos_x_cuadrado = variable[0]
-                        pos_y_cuadrado = variable[1]
-                        
-                        if pos_x_click >= pos_x_cuadrado and pos_x_click <= (pos_x_cuadrado + ANCHO_CUADRADO) and pos_y_click >= pos_y_cuadrado and pos_y_click <= (pos_y_cuadrado + ALTO_CUADRADO):
-                            
-                            click_valido = True
-                            if lista[i] in respuestas_correctas:                            
-                                contador_correctas += 1
+                validacion_click = validacion[0]
+                contador_correctas = validacion[1]
 
-                if click_valido == True:
+                if validacion_click == True:
                     if contador_correctas > 0:
                         sonido_respuesta_correcta.play()
                         acumulador_puntos += 20
                         tiempo_de_respuesta += tiempo_transcurrido
                         cronometro_detener = True
                         tiempo_transcurrido = 0 #REINICIO EL TIEMPO TRANSCURRIDO
-                        pygame.time.delay(1000)
                         k += 1
 
-                        #PARA QUE NO HAYAN ERRORES DE LIST INDEX OUT OF RANGE
+                        #PARA QUE NO HAYAN ERRORES DE LIST INDEX OUT OF RANGE (SE EXCEDE DE RANGO)
                         if k < len(lista_marcas_aleatorias):
                             lista = dato.get(lista_marcas_aleatorias[k])
-                        tiempo_inicial = pygame.time.get_ticks() #REINICIA EL CRONOMETRO
-                        #print(lista)
+                        tiempo_inicial = pygame.time.get_ticks()#REINICIA EL CRONOMETRO Y EMPIEZA A CONTAR DE
+                                                                #NUEVO A PARTIR DE ESE TIEMPO INICIAL
                         
                     else:
                         vidas -= 1
@@ -202,33 +205,24 @@ def crear_pantalla_juego(pantalla, path_archivo_json: str, lista_marcas_aleatori
                         tiempo_de_respuesta += tiempo_transcurrido
                         cronometro_detener = True
                         tiempo_transcurrido = 0 #REINICIO EL TIEMPO TRANSCURRIDO
-                        pygame.time.delay(1000)
                         k += 1
 
-                        #PARA QUE NO HAYAN ERRORES DE LIST INDEX OUT OF RANGE
+                        #PARA QUE NO HAYAN ERRORES DE LIST INDEX OUT OF RANGE (SE EXCEDE DE RANGO)
                         if k < len(lista_marcas_aleatorias):
                             lista = dato.get(lista_marcas_aleatorias[k])
-                        tiempo_inicial = pygame.time.get_ticks() #REINICIA EL CRONOMETRO
-                        #print(lista)
+                        tiempo_inicial = pygame.time.get_ticks()#REINICIA EL CRONOMETRO Y EMPIEZA A CONTAR DE
+                                                                #NUEVO A PARTIR DE ESE TIEMPO INICIAL
                 
-
-                #HACE QUE NO ESTE PARADO EL CRONOMETRO DE NUEVO
-                cronometro_detener = False
+                    #HACE QUE NO ESTE PARADO EL CRONOMETRO DE NUEVO
+                    cronometro_detener = False
                       
-                
-        #LOGICA PUNTOS - FUNCION
-        
-        if acumulador_puntos < 0:
-            acumulador_puntos = 0
-        
-        texto_puntos = fuente_puntos.render(f'{acumulador_puntos}', False, colores.AMARILLO_BRILLANTE)
-        pantalla.blit(texto_puntos, (pos_x_puntos, pos_y_puntos))
+        #LOGICA PUNTOS
+        acumulador_puntos = actualizar_puntos(pantalla, acumulador_puntos)
 
-
-        #LOGICA CRONOMETRO - FUNCION
+        #LOGICA CRONOMETRO
     
         if cronometro_detener == False:
-            tiempo_actual = pygame.time.get_ticks()
+            tiempo_actual = pygame.time.get_ticks() #EMPIEZA A CONTAR A PARTIR DEL TIEMPO INICIAL
             tiempo_transcurrido = tiempo_actual - tiempo_inicial
             tiempo_final = ((tiempo_total - tiempo_transcurrido)* 0.001)
             
@@ -238,10 +232,11 @@ def crear_pantalla_juego(pantalla, path_archivo_json: str, lista_marcas_aleatori
                 tiempo_inicial = pygame.time.get_ticks()
                 vidas -= 1
                 k += 1
+                sonido_respuesta_incorrecta.play()
+            
                 #PARA QUE NO HAYAN ERRORES DE LIST INDEX OUT OF RANGE
                 if k < len(lista_marcas_aleatorias):
                     lista = dato.get(lista_marcas_aleatorias[k])
-                #tiempo_inicial = pygame.time.get_ticks()
             
             cronometro_detener = False
 
@@ -264,19 +259,14 @@ def crear_pantalla_juego(pantalla, path_archivo_json: str, lista_marcas_aleatori
                 finalizar = True
                 
                 #SACAMOS PROMEDIO DE TIEMPO DE RESPUESTA DE TODAS LAS PREGUNTAS
-                tiempo_de_respuesta = (tiempo_de_respuesta * 0.001)
-                promedio_tiempo_respuestas = tiempo_de_respuesta / k
-  
-  
-        pantalla.blit(texto_segundos, (pos_x_segundos, pos_y_segundos))
+                promedio_tiempo_respuestas = realizar_promedio_tiempo_respuesta(tiempo_de_respuesta, k)
+
 
         if k == len(lista_marcas_aleatorias):
             finalizar = True
-            tiempo_de_respuesta = (tiempo_de_respuesta * 0.001)
-            promedio_tiempo_respuestas = tiempo_de_respuesta / k
+            promedio_tiempo_respuestas = realizar_promedio_tiempo_respuesta(tiempo_de_respuesta, k)
 
         if finalizar == True:
-
             return pantalla, acumulador_puntos, promedio_tiempo_respuestas
 
         pygame.display.update()
@@ -285,8 +275,29 @@ def crear_pantalla_juego(pantalla, path_archivo_json: str, lista_marcas_aleatori
 #--------------------------------------------------------------------------------------
 
 def crear_pantalla_resultados(pantalla, puntos_obtenidos: int, promedio_tiempo: int|float):
-    
+    """La funcion se encarga de crear lo que seria la pantalla de resultados y mostrarla,
+    ademas de que se encarga de manejar los eventos del mouse para detectar si el jugador
+    le dio click en el boton de "Volver al menu" o si le dio click al sonido para detenerlo
+    o encenderlo nuevamente.
 
+    Args:
+        pantalla: Recibe por parametro una pantalla (la cual representa una surface de la libreria Pygame),
+        y en este caso la pantalla pasada por parametro es la pantalla del juego, haciendo como la animacion
+        de que pasa de la pantalla del juego a la final donde se muestran los datos finales de la partida,
+        como la cantidad de puntos, promedio de tiempo de respuesta de todas las marcas, etc, 
+        sin crear otra ventana con set_mode().
+
+        puntos_obtenidos (int): Recibe por parametro un numero de tipo int que representa la cantidad
+        de puntos obtenidos que obtuvo el jugador en una partida.
+
+        promedio_tiempo (int | float): Recibe por parametro un numero de tipo int|float que representa
+        el promedio de tiempo en que adivino todas (o no) las marcas.
+
+    Returns:
+        tuple: Retorna una tupla la cual contiene una bandera (que puede ser True or False, dependiendo si
+        el usuario le da click o no en el boton de "Volver al menu") y una surface (que representa la pantalla
+        de resultados/final)
+    """
     sonido_inicio_fin.set_volume(0.1)
     sonido_inicio_fin.play(-1)
 

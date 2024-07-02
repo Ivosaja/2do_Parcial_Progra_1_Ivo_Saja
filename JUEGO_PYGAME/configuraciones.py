@@ -11,7 +11,6 @@ DIMENSIONES = (ANCHO_PANTALLA, ALTO_PANTALLA)
 FPS = 30
 
 
-
 #-----------------------PANTALLA PRINCIPAL-----------------------#
 titulo_juego = 'GUESS THE LOGO'
 icono = pygame.image.load('Imagenes/logo.png')
@@ -91,7 +90,6 @@ vidas_1 = pygame.image.load('Imagenes/Corazones/barra_de_vida_5.png')
 vidas_1 = pygame.transform.scale(vidas_1, (ANCHO_VIDAS, ALTO_VIDAS))
 
 #CUADRADO QUE CONTIENE LA MARCA A ADIVINAR
-#(0,90,200,50)
 ANCHO_CUADRADO_MARCA = 200 
 ALTO_CUADRADO_MARCA = 50
 
@@ -102,15 +100,17 @@ pos_x_texto_marca = 45
 pos_y_texto_marca = 103
 
 #CUADRADO QUE CONTIENE EL RECORD PREVIO DEL JUGADOR
-ANCHO_CUADRADO_RECORD = 200 
-ALTO_CUADRADO_RECORD = 50
+ANCHO_BURBUJA_DIALOGO_RECORD = 190
+ALTO_BURBUJA_DIALOGO_RECORD = 65
 
-pos_x_cuadrado_record = 34
-pos_y_cuadrado_record = 170
+imagen_burbuja_dialogo_record = pygame.image.load('Imagenes/burbuja_dialogo_record.png')
+imagen_burbuja_dialogo_record = pygame.transform.scale(imagen_burbuja_dialogo_record, (ANCHO_BURBUJA_DIALOGO_RECORD, ALTO_BURBUJA_DIALOGO_RECORD))
 
-pos_x_texto_record = 45
-pos_y_texto_record = 103
+pos_x_imagen_burbuja_dialogo_record = 460
+pos_y_imagen_burbuja_dialogo_record = 260
 
+pos_x_texto_record = 476
+pos_y_texto_record = 275
 
 
 #CRONOMETRO
@@ -145,7 +145,7 @@ imagen_moneda = pygame.transform.scale(imagen_moneda, (ANCHO_MONEDA, ALTO_MONEDA
 #PERSONAJE JUEGO
 ANCHO_PERSONAJE = 100 
 ALTO_PERSONAJE = 100
-pos_x_personaje = 437
+pos_x_personaje = 390
 pos_y_personaje = 310
 
 personaje = pygame.image.load('Imagenes/personaje.png')
@@ -154,29 +154,16 @@ personaje = pygame.transform.scale(personaje, (ANCHO_PERSONAJE, ALTO_PERSONAJE))
 
 #CUADRADOS DE IMAGENES
 
-matriz_dimensiones_cuadradados = [[(181,448)],
-                                  [(350,448)],
-                                  [(519,448)],
-                                  [(684,448)]
-                            ]
+matriz_dimensiones_cuadrados = [[(181,448)],
+                                [(350,448)],
+                                [(519,448)],
+                                [(684,448)]
+                                ]
 
 
 
 ANCHO_CUADRADO = 148
 ALTO_CUADRADO = 147
-
-# pos_x_cuadrado_1 = 183 
-# pos_y_cuadrado_1 = 451
-
-# pos_x_cuadrado_2 = 352 
-# pos_y_cuadrado_2 = 451
-
-# pos_x_cuadrado_3 = 521 
-# pos_y_cuadrado_3 = 451
-
-# pos_x_cuadrado_4 = 686 
-# pos_y_cuadrado_4 = 451
-
 
 
 #-----------------------PANTALLA RESULTADOS-----------------------#
