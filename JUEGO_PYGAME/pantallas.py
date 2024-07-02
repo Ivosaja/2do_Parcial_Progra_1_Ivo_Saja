@@ -98,7 +98,6 @@ def crear_pantalla_principal(pantalla):
         pygame.display.update()
     
 
-
 #-------------------------------------------------------------------------------------
 
 def crear_pantalla_juego(pantalla, path_archivo_json: str, lista_marcas_aleatorias: list, record_previo: int):
@@ -213,7 +212,7 @@ def crear_pantalla_juego(pantalla, path_archivo_json: str, lista_marcas_aleatori
                         tiempo_inicial = pygame.time.get_ticks()#REINICIA EL CRONOMETRO Y EMPIEZA A CONTAR DE
                                                                 #NUEVO A PARTIR DE ESE TIEMPO INICIAL
                 
-                    #HACE QUE NO ESTE PARADO EL CRONOMETRO DE NUEVO
+                    #HACE QUE NO ESTE PARADO EL CRONOMETRO DE NUEVO - VUELVE A INICIARLO
                     cronometro_detener = False
                       
         #LOGICA PUNTOS
